@@ -65,6 +65,14 @@ See [DEPENDENCY_GRAPH.MD](./DEPENDENCY_GRAPH.MD) for the repository dependency g
 
 `tests/compile_fail/` contains provider declarations that are required to fail compilation for invalid compile-time contracts. They intentionally do not depend on compiler-specific diagnostic prose.
 
+Run the complete local suite from the repository root with:
+
+```text
+python3 tests/run_tests.py
+```
+
+The runner locates a sibling `EDP-System` checkout automatically, or accepts `--system /path/to/EDP-System`. It compiles and executes the positive suite and then verifies that every compile-fail fixture is rejected. `--support-stub` is available only for deliberate isolated testing against the test Composition shim.
+
 ## Build baseline
 
 EDP-Persistence requires C++20. New Arduino consumers should prefer PIOArduino. Developers retaining conventional PlatformIO must select an Arduino-ESP32 release/toolchain capable of compiling C++20 and explicitly configure the project for `-std=gnu++20`. See [Build baseline](./docs/BUILDING.MD) for details.
