@@ -204,15 +204,29 @@ namespace ESPressio::Persistence {
 
     /// Describes caller-owned immutable source bytes.
     struct SourceBufferView final {
+
+        // Caller-owned source range.
+
+        /// First readable source byte, or null when Size is zero.
         const void* Address;
+
+        /// Number of readable source bytes.
         std::size_t Size;
+
     };
 
 
     /// Describes caller-owned writable destination bytes.
     struct DestinationBufferView final {
+
+        // Caller-owned destination range.
+
+        /// First writable destination byte, or null when Capacity is zero.
         void* Address;
+
+        /// Number of writable destination bytes.
         std::size_t Capacity;
+
     };
 
 
@@ -483,33 +497,73 @@ namespace ESPressio::Persistence {
     };
 
 
+    /// Read result carrying the capability-specific primary status.
+    /// TStatus is the primary status enum for the requested read operation.
     template<class TStatus>
     struct ReadResult final {
+
+        // Operation result.
+
+        /// Primary mutually exclusive read outcome.
         TStatus Status;
+
+        /// One-byte mask containing orthogonal ReadFact values.
         std::uint8_t Facts;
+
+        /// Number of bytes semantically transferred on success.
         std::size_t BytesTransferred;
+
+        /// Logical bytes available to this read range when the corresponding fact is set.
         StorageSize AvailableDataSize;
+
     };
 
 
+    /// Size-query result carrying the capability-specific primary status.
+    /// TStatus is the primary status enum for the requested size operation.
     template<class TStatus>
     struct SizeQueryResult final {
+
+        // Operation result.
+
+        /// Primary mutually exclusive size-query outcome.
         TStatus Status;
+
+        /// Complete logical object size on success, otherwise normalized to zero.
         StorageSize Size;
+
     };
 
 
+    /// Enumeration result carrying the capability-specific primary status.
+    /// TStatus is the primary status enum for the requested enumeration operation.
     template<class TStatus>
     struct EnumerationResult final {
+
+        // Operation result.
+
+        /// Primary mutually exclusive enumeration outcome.
         TStatus Status;
+
+        /// Number of callbacks actually invoked before the operation returned.
         StorageSize EntriesVisited;
+
     };
 
 
     struct CapacityQueryResult final {
+
+        // Operation result.
+
+        /// Primary mutually exclusive capacity-query outcome.
         CapacityQueryStatus Status;
+
+        /// Total capacity of the backing allocation domain on success.
         StorageSize TotalCapacity;
+
+        /// Currently available capacity of the backing allocation domain on success.
         StorageSize AvailableCapacity;
+
     };
 
 
