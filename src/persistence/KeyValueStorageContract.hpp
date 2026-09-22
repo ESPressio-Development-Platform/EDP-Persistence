@@ -10,10 +10,21 @@ namespace ESPressio::Persistence {
 
     /// One KeyValueStorage enumeration observation.
     struct KeyEnumerationEntry final {
+
+        // Delivered entry metadata.
+
+        /// Key text backed by the caller's reusable key buffer.
         TextView Key;
+
+        /// Complete UTF-8 key size before destination truncation.
         StorageSize CompleteKeySize;
+
+        /// Current complete logical value size.
         StorageSize ValueSize;
+
+        /// One-byte mask containing KeyEnumerationEntryFact values.
         std::uint8_t Facts;
+
     };
 
 
