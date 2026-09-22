@@ -7,10 +7,12 @@
 
 namespace ESPressio::Persistence::Detail {
 
+    /// TProperties is the provider Property set; TProperty is the Property being inspected.
     template<class TProperties, class TProperty>
     inline constexpr bool HasPropertyV = TProperties::template Contains<TProperty>;
 
 
+    /// TProperties is the provider Property set; TProperty is the Property being inspected.
     template<class TProperties, class TProperty>
     consteval auto PropertyValue() {
         static_assert(
@@ -30,6 +32,7 @@ namespace ESPressio::Persistence::Detail {
     }
 
 
+    /// TProperties is the provider Property set; the remaining template types identify the optional-operation support and guarantee Properties.
     template<
         class TProperties,
         class TSupportProperty,
