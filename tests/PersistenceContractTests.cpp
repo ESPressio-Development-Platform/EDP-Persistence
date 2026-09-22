@@ -178,6 +178,11 @@ namespace ESPressio::Persistence::Tests {
     static_assert(CheckedAdd(StorageSize{10U}, StorageSize{20U}).Succeeded);
     static_assert(CheckedAdd(StorageSize{10U}, StorageSize{20U}).Value == StorageSize{30U});
     static_assert(!CheckedAdd(StorageSize{~std::uint64_t{0U}}, StorageSize{1U}).Succeeded);
+    static_assert(CheckedAdd(StorageOffset{10U}, StorageSize{20U}).Succeeded);
+    static_assert(CheckedAdd(StorageOffset{10U}, StorageSize{20U}).Value == StorageOffset{30U});
+    static_assert(!CheckedAdd(StorageOffset{~std::uint64_t{0U}}, StorageSize{1U}).Succeeded);
+    static_assert(IsOffsetWithinOrAtEnd(StorageOffset{10U}, StorageSize{10U}));
+    static_assert(AvailableFromOffset(StorageSize{100U}, StorageOffset{30U}) == StorageSize{70U});
 
 } // ESPressio::Persistence::Tests
 
