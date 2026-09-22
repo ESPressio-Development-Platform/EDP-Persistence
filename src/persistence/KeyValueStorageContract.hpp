@@ -29,6 +29,7 @@ namespace ESPressio::Persistence {
 
 
     /// Callback accepted by KeyValueStorage key enumeration.
+    /// TCallback is the caller-owned callback type being constrained.
     template<class TCallback>
     concept KeyEnumerationCallback = requires(
         TCallback& Callback,
@@ -47,8 +48,13 @@ namespace ESPressio::Persistence {
             KeyEnumerationCallbackProbe& operator=(const KeyEnumerationCallbackProbe&) = delete;
 
         public:
+
+            // Probe operations.
+
+            /// Constructs a callback probe used only for compile-time provider validation.
             KeyEnumerationCallbackProbe() = default;
 
+            /// Accepts one KeyValueStorage enumeration entry during compile-time expression checking.
             [[nodiscard]] EnumerationControl operator()(const KeyEnumerationEntry&) noexcept {
                 return EnumerationControl::Continue;
             }
@@ -56,6 +62,7 @@ namespace ESPressio::Persistence {
         };
 
 
+        /// TProvider is the provider type whose operation surface is being inspected.
         template<class TProvider>
         concept HasMandatoryKeyValueStorageOperations = requires(
             TProvider& MutableProvider,
@@ -72,6 +79,7 @@ namespace ESPressio::Persistence {
         };
 
 
+        /// TProvider is the provider type whose operation surface is being inspected.
         template<class TProvider>
         concept HasKeyEnumerationOperation = requires(
             const TProvider& Provider,
@@ -82,6 +90,7 @@ namespace ESPressio::Persistence {
         };
 
 
+        /// TProvider is the provider type whose operation surface is being inspected.
         template<class TProvider>
         concept HasReadValueAtOperation = requires(
             const TProvider& Provider,
@@ -93,12 +102,14 @@ namespace ESPressio::Persistence {
         };
 
 
+        /// TProvider is the provider type whose operation surface is being inspected.
         template<class TProvider>
         concept HasClearAllOperation = requires(TProvider& Provider) {
             { Provider.ClearAllKeys() } noexcept -> std::same_as<KeyValueClearStatus>;
         };
 
 
+        /// TProvider is the provider type whose operation surface is being inspected.
         template<class TProvider>
         concept HasKeyValueCapacityOperation = requires(const TProvider& Provider) {
             { Provider.GetKeyValueStorageCapacity() } noexcept -> std::same_as<CapacityQueryResult>;
