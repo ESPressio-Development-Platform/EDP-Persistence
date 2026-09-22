@@ -26,6 +26,9 @@ namespace ESPressio::Persistence {
     };
 
 
+    class DirectoryPathView;
+
+
     namespace Detail {
 
         struct PersistenceProviderAccess;
