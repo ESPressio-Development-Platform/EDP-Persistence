@@ -158,13 +158,13 @@ namespace ESPressio::Persistence {
               Size_(Size) {}
 
         /// Allows DirectoryPathView to construct the distinguished provider-root representation.
-
-        /// Grants validated factories access to the private semantic constructor.
-        friend struct ValidationResult;
-
         friend class DirectoryPathView;
 
     public:
+
+        // Validation result declaration.
+
+        /// Structured result returned by FilePathView validation.
         struct ValidationResult;
 
         /// Returns the first referenced text byte.
@@ -312,9 +312,6 @@ namespace ESPressio::Persistence {
         constexpr KeyView(const char* Data, std::size_t Size) noexcept
             : Data_(Data),
               Size_(Size) {}
-
-        /// Grants validated factories access to the private semantic constructor.
-        friend struct ValidationResult;
 
     public:
 
