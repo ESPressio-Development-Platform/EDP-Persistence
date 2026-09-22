@@ -10,11 +10,24 @@ namespace ESPressio::Persistence {
 
     /// One FileStorage directory-enumeration observation.
     struct FileEnumerationEntry final {
+
+        // Delivered entry metadata.
+
+        /// Entry name backed by the caller's reusable name buffer.
         TextView Name;
+
+        /// Complete UTF-8 entry-name size before destination truncation.
         StorageSize CompleteNameSize;
+
+        /// Logical file size when FileSizeIsKnown is set, otherwise zero.
         StorageSize FileSize;
+
+        /// One-byte mask containing FileEnumerationEntryFact values.
         std::uint8_t Facts;
+
+        /// Kind of FileStorage entry being delivered.
         FileEntryKind Kind;
+
     };
 
 
