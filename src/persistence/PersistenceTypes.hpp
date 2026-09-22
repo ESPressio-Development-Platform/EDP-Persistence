@@ -77,6 +77,49 @@ namespace ESPressio::Persistence {
     }
 
 
+    /// Reports whether adding an extent to a storage offset succeeded.
+    struct CheckedStorageOffsetResult final {
+        StorageOffset Value;
+        bool Succeeded;
+    };
+
+
+    /// Adds a logical byte extent to an offset without permitting unsigned wraparound.
+    [[nodiscard]] constexpr CheckedStorageOffsetResult CheckedAdd(
+        StorageOffset Offset,
+        StorageSize Extent
+    ) noexcept {
+        constexpr auto Maximum = ~std::uint64_t{0U};
+
+        if (Extent.RawValue > Maximum - Offset.RawValue) {
+            return {StorageOffset{}, false};
+        }
+
+        return {
+            StorageOffset{Offset.RawValue + Extent.RawValue},
+            true
+        };
+    }
+
+
+    /// Indicates whether an offset identifies a position at or before a logical size.
+    [[nodiscard]] constexpr bool IsOffsetWithinOrAtEnd(
+        StorageOffset Offset,
+        StorageSize Size
+    ) noexcept {
+        return Offset.RawValue <= Size.RawValue;
+    }
+
+
+    /// Returns the bytes available from a previously validated offset.
+    [[nodiscard]] constexpr StorageSize AvailableFromOffset(
+        StorageSize Size,
+        StorageOffset Offset
+    ) noexcept {
+        return StorageSize{Size.RawValue - Offset.RawValue};
+    }
+
+
     enum class AccessMode : std::uint8_t {
         ReadOnly = 0U,
         ReadWrite = 1U
