@@ -182,7 +182,39 @@ namespace ESPressio::Persistence::Tests {
     static_assert(CheckedAdd(StorageOffset{10U}, StorageSize{20U}).Value == StorageOffset{30U});
     static_assert(CheckedAdd(StorageOffset{~std::uint64_t{0U}}, StorageSize{1U}).Status == StorageArithmeticStatus::Overflow);
     static_assert(IsOffsetWithinOrAtEnd(StorageOffset{10U}, StorageSize{10U}));
+    static_assert(!IsOffsetWithinOrAtEnd(StorageOffset{11U}, StorageSize{10U}));
     static_assert(AvailableFromOffset(StorageSize{100U}, StorageOffset{30U}) == StorageSize{70U});
+
+    static_assert(FilePathView::Validate("a").Status == FilePathValidationStatus::Succeeded);
+    static_assert(FilePathView::Validate("").Status == FilePathValidationStatus::Empty);
+    static_assert(FilePathView::Validate("/a").Status == FilePathValidationStatus::LeadingSeparator);
+    static_assert(FilePathView::Validate("a/").Status == FilePathValidationStatus::TrailingSeparator);
+    static_assert(FilePathView::Validate("a//b").Status == FilePathValidationStatus::EmptySegment);
+    static_assert(FilePathView::Validate("./a").Status == FilePathValidationStatus::DotSegment);
+    static_assert(FilePathView::Validate("../a").Status == FilePathValidationStatus::ParentSegment);
+    static_assert(FilePathView::Validate("a\\b").Status == FilePathValidationStatus::Backslash);
+    static_assert(KeyView::Validate("a/b").Status == KeyValidationStatus::Succeeded);
+    static_assert(KeyView::Validate("").Status == KeyValidationStatus::Empty);
+
+    static_assert(DirectoryPathView::Root().IsRoot());
+    static_assert(!DirectoryPathView::NonRoot(FilePathView::Validate("dir").Value).IsRoot());
+
+    static_assert(HasFact(
+        static_cast<std::uint8_t>(ReadFact::WasTruncated),
+        ReadFact::WasTruncated
+    ));
+    static_assert(!HasFact(
+        static_cast<std::uint8_t>(ReadFact::WasTruncated),
+        ReadFact::IsSmallerThanAvailableBuffer
+    ));
+
+    static_assert(std::is_trivially_copyable_v<StorageSize>);
+    static_assert(std::is_trivially_copyable_v<StorageOffset>);
+    static_assert(std::is_trivially_copyable_v<SourceBufferView>);
+    static_assert(std::is_trivially_copyable_v<DestinationBufferView>);
+    static_assert(std::is_trivially_copyable_v<FileReadResult>);
+    static_assert(std::is_trivially_copyable_v<KeyValueReadResult>);
+    static_assert(std::is_trivially_copyable_v<CapacityQueryResult>);
 
 } // ESPressio::Persistence::Tests
 
