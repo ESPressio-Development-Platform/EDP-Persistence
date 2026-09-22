@@ -25,22 +25,6 @@ namespace ESPressio::Persistence {
         InvalidUtf8 = 3U
     };
 
-    class TextView final {
-    private:
-        const char* Data_;
-        std::size_t Size_;
-
-        constexpr TextView(const char* Data, std::size_t Size) noexcept : Data_(Data), Size_(Size) {}
-
-        friend class FilePathView;
-        friend class KeyView;
-
-    public:
-        constexpr TextView() noexcept : Data_(nullptr), Size_(0U) {}
-        [[nodiscard]] constexpr const char* Data() const noexcept { return Data_; }
-        [[nodiscard]] constexpr std::size_t Size() const noexcept { return Size_; }
-        [[nodiscard]] constexpr bool IsEmpty() const noexcept { return Size_ == 0U; }
-    };
 
     namespace Detail {
 
@@ -48,14 +32,17 @@ namespace ESPressio::Persistence {
             return (Value & 0xC0U) == 0x80U;
         }
 
+
         [[nodiscard]] constexpr bool IsValidUtf8(const char* Data, std::size_t Size) noexcept {
             if (Size != 0U && Data == nullptr) {
                 return false;
             }
 
             std::size_t Index = 0U;
+
             while (Index < Size) {
                 const auto First = static_cast<unsigned char>(Data[Index]);
+
                 if (First <= 0x7FU) {
                     ++Index;
                     continue;
@@ -63,10 +50,19 @@ namespace ESPressio::Persistence {
 
                 std::size_t Length = 0U;
                 std::uint32_t CodePoint = 0U;
-                if ((First & 0xE0U) == 0xC0U) { Length = 2U; CodePoint = First & 0x1FU; }
-                else if ((First & 0xF0U) == 0xE0U) { Length = 3U; CodePoint = First & 0x0FU; }
-                else if ((First & 0xF8U) == 0xF0U) { Length = 4U; CodePoint = First & 0x07U; }
-                else { return false; }
+
+                if ((First & 0xE0U) == 0xC0U) {
+                    Length = 2U;
+                    CodePoint = First & 0x1FU;
+                } else if ((First & 0xF0U) == 0xE0U) {
+                    Length = 3U;
+                    CodePoint = First & 0x0FU;
+                } else if ((First & 0xF8U) == 0xF0U) {
+                    Length = 4U;
+                    CodePoint = First & 0x07U;
+                } else {
+                    return false;
+                }
 
                 if (Index + Length > Size) {
                     return false;
@@ -74,9 +70,11 @@ namespace ESPressio::Persistence {
 
                 for (std::size_t Offset = 1U; Offset < Length; ++Offset) {
                     const auto Byte = static_cast<unsigned char>(Data[Index + Offset]);
+
                     if (!IsContinuationByte(Byte)) {
                         return false;
                     }
+
                     CodePoint = (CodePoint << 6U) | (Byte & 0x3FU);
                 }
 
@@ -96,27 +94,73 @@ namespace ESPressio::Persistence {
 
     } // ESPressio::Persistence::Detail
 
+
+    class TextView final {
+    private:
+        const char* Data_;
+        std::size_t Size_;
+
+        constexpr TextView(const char* Data, std::size_t Size) noexcept
+            : Data_(Data),
+              Size_(Size) {}
+
+        friend struct Detail::PersistenceProviderAccess;
+
+    public:
+        constexpr TextView() noexcept
+            : Data_(nullptr),
+              Size_(0U) {}
+
+        [[nodiscard]] constexpr const char* Data() const noexcept {
+            return Data_;
+        }
+
+        [[nodiscard]] constexpr std::size_t Size() const noexcept {
+            return Size_;
+        }
+
+        [[nodiscard]] constexpr bool IsEmpty() const noexcept {
+            return Size_ == 0U;
+        }
+
+    };
+
+
     class FilePathView final {
     private:
         const char* Data_;
         std::size_t Size_;
 
-        constexpr FilePathView(const char* Data, std::size_t Size) noexcept : Data_(Data), Size_(Size) {}
+        constexpr FilePathView(const char* Data, std::size_t Size) noexcept
+            : Data_(Data),
+              Size_(Size) {}
+
+        friend class DirectoryPathView;
 
     public:
         struct ValidationResult;
 
-        [[nodiscard]] constexpr const char* Data() const noexcept { return Data_; }
-        [[nodiscard]] constexpr std::size_t Size() const noexcept { return Size_; }
+        [[nodiscard]] constexpr const char* Data() const noexcept {
+            return Data_;
+        }
 
-        [[nodiscard]] static constexpr ValidationResult Validate(const char* Data, std::size_t Size) noexcept;
+        [[nodiscard]] constexpr std::size_t Size() const noexcept {
+            return Size_;
+        }
+
+        [[nodiscard]] static constexpr ValidationResult Validate(
+            const char* Data,
+            std::size_t Size
+        ) noexcept;
 
         template<std::size_t TSize>
         [[nodiscard]] static constexpr ValidationResult Validate(const char (&Value)[TSize]) noexcept {
             static_assert(TSize > 0U);
             return Validate(Value, TSize - 1U);
         }
+
     };
+
 
     struct FilePathView::ValidationResult final {
         FilePathValidationStatus Status;
@@ -124,52 +168,116 @@ namespace ESPressio::Persistence {
         bool HasValue;
     };
 
-    [[nodiscard]] constexpr FilePathView::ValidationResult FilePathView::Validate(const char* Data, std::size_t Size) noexcept {
-        if (Size == 0U) return {FilePathValidationStatus::Empty, FilePathView(nullptr, 0U), false};
-        if (Data == nullptr) return {FilePathValidationStatus::InvalidUtf8, FilePathView(nullptr, 0U), false};
-        if (!Detail::IsValidUtf8(Data, Size)) return {FilePathValidationStatus::InvalidUtf8, FilePathView(nullptr, 0U), false};
-        if (Data[0] == '/') return {FilePathValidationStatus::LeadingSeparator, FilePathView(nullptr, 0U), false};
-        if (Data[Size - 1U] == '/') return {FilePathValidationStatus::TrailingSeparator, FilePathView(nullptr, 0U), false};
+
+    [[nodiscard]] constexpr FilePathView::ValidationResult FilePathView::Validate(
+        const char* Data,
+        std::size_t Size
+    ) noexcept {
+        const FilePathView EmptyValue(nullptr, 0U);
+
+        if (Size == 0U) {
+            return {FilePathValidationStatus::Empty, EmptyValue, false};
+        }
+
+        if (Data == nullptr) {
+            return {FilePathValidationStatus::InvalidUtf8, EmptyValue, false};
+        }
+
+        if (!Detail::IsValidUtf8(Data, Size)) {
+            return {FilePathValidationStatus::InvalidUtf8, EmptyValue, false};
+        }
+
+        if (Data[0] == '/') {
+            return {FilePathValidationStatus::LeadingSeparator, EmptyValue, false};
+        }
+
+        if (Data[Size - 1U] == '/') {
+            return {FilePathValidationStatus::TrailingSeparator, EmptyValue, false};
+        }
 
         std::size_t SegmentStart = 0U;
+
         for (std::size_t Index = 0U; Index < Size; ++Index) {
-            if (Data[Index] == '\0') return {FilePathValidationStatus::ContainsNull, FilePathView(nullptr, 0U), false};
-            if (Data[Index] == '\\') return {FilePathValidationStatus::Backslash, FilePathView(nullptr, 0U), false};
-            if (Data[Index] != '/') continue;
-            if (Index == SegmentStart) return {FilePathValidationStatus::EmptySegment, FilePathView(nullptr, 0U), false};
+            if (Data[Index] == '\0') {
+                return {FilePathValidationStatus::ContainsNull, EmptyValue, false};
+            }
+
+            if (Data[Index] == '\\') {
+                return {FilePathValidationStatus::Backslash, EmptyValue, false};
+            }
+
+            if (Data[Index] != '/') {
+                continue;
+            }
+
+            if (Index == SegmentStart) {
+                return {FilePathValidationStatus::EmptySegment, EmptyValue, false};
+            }
+
             const auto Length = Index - SegmentStart;
-            if (Length == 1U && Data[SegmentStart] == '.') return {FilePathValidationStatus::DotSegment, FilePathView(nullptr, 0U), false};
-            if (Length == 2U && Data[SegmentStart] == '.' && Data[SegmentStart + 1U] == '.') return {FilePathValidationStatus::ParentSegment, FilePathView(nullptr, 0U), false};
+
+            if (Length == 1U && Data[SegmentStart] == '.') {
+                return {FilePathValidationStatus::DotSegment, EmptyValue, false};
+            }
+
+            if (Length == 2U && Data[SegmentStart] == '.' && Data[SegmentStart + 1U] == '.') {
+                return {FilePathValidationStatus::ParentSegment, EmptyValue, false};
+            }
+
             SegmentStart = Index + 1U;
         }
 
-        const auto Length = Size - SegmentStart;
-        if (Length == 1U && Data[SegmentStart] == '.') return {FilePathValidationStatus::DotSegment, FilePathView(nullptr, 0U), false};
-        if (Length == 2U && Data[SegmentStart] == '.' && Data[SegmentStart + 1U] == '.') return {FilePathValidationStatus::ParentSegment, FilePathView(nullptr, 0U), false};
-        return {FilePathValidationStatus::Succeeded, FilePathView(Data, Size), true};
+        const auto FinalLength = Size - SegmentStart;
+
+        if (FinalLength == 1U && Data[SegmentStart] == '.') {
+            return {FilePathValidationStatus::DotSegment, EmptyValue, false};
+        }
+
+        if (FinalLength == 2U && Data[SegmentStart] == '.' && Data[SegmentStart + 1U] == '.') {
+            return {FilePathValidationStatus::ParentSegment, EmptyValue, false};
+        }
+
+        return {
+            FilePathValidationStatus::Succeeded,
+            FilePathView(Data, Size),
+            true
+        };
     }
+
 
     class KeyView final {
     private:
         const char* Data_;
         std::size_t Size_;
 
-        constexpr KeyView(const char* Data, std::size_t Size) noexcept : Data_(Data), Size_(Size) {}
+        constexpr KeyView(const char* Data, std::size_t Size) noexcept
+            : Data_(Data),
+              Size_(Size) {}
 
     public:
         struct ValidationResult;
 
-        [[nodiscard]] constexpr const char* Data() const noexcept { return Data_; }
-        [[nodiscard]] constexpr std::size_t Size() const noexcept { return Size_; }
+        [[nodiscard]] constexpr const char* Data() const noexcept {
+            return Data_;
+        }
 
-        [[nodiscard]] static constexpr ValidationResult Validate(const char* Data, std::size_t Size) noexcept;
+        [[nodiscard]] constexpr std::size_t Size() const noexcept {
+            return Size_;
+        }
+
+        [[nodiscard]] static constexpr ValidationResult Validate(
+            const char* Data,
+            std::size_t Size
+        ) noexcept;
 
         template<std::size_t TSize>
         [[nodiscard]] static constexpr ValidationResult Validate(const char (&Value)[TSize]) noexcept {
             static_assert(TSize > 0U);
             return Validate(Value, TSize - 1U);
         }
+
     };
+
 
     struct KeyView::ValidationResult final {
         KeyValidationStatus Status;
@@ -177,34 +285,85 @@ namespace ESPressio::Persistence {
         bool HasValue;
     };
 
-    [[nodiscard]] constexpr KeyView::ValidationResult KeyView::Validate(const char* Data, std::size_t Size) noexcept {
-        if (Size == 0U) return {KeyValidationStatus::Empty, KeyView(nullptr, 0U), false};
-        if (Data == nullptr) return {KeyValidationStatus::InvalidUtf8, KeyView(nullptr, 0U), false};
-        if (!Detail::IsValidUtf8(Data, Size)) return {KeyValidationStatus::InvalidUtf8, KeyView(nullptr, 0U), false};
-        for (std::size_t Index = 0U; Index < Size; ++Index) {
-            if (Data[Index] == '\0') return {KeyValidationStatus::ContainsNull, KeyView(nullptr, 0U), false};
+
+    [[nodiscard]] constexpr KeyView::ValidationResult KeyView::Validate(
+        const char* Data,
+        std::size_t Size
+    ) noexcept {
+        const KeyView EmptyValue(nullptr, 0U);
+
+        if (Size == 0U) {
+            return {KeyValidationStatus::Empty, EmptyValue, false};
         }
-        return {KeyValidationStatus::Succeeded, KeyView(Data, Size), true};
+
+        if (Data == nullptr) {
+            return {KeyValidationStatus::InvalidUtf8, EmptyValue, false};
+        }
+
+        if (!Detail::IsValidUtf8(Data, Size)) {
+            return {KeyValidationStatus::InvalidUtf8, EmptyValue, false};
+        }
+
+        for (std::size_t Index = 0U; Index < Size; ++Index) {
+            if (Data[Index] == '\0') {
+                return {KeyValidationStatus::ContainsNull, EmptyValue, false};
+            }
+        }
+
+        return {
+            KeyValidationStatus::Succeeded,
+            KeyView(Data, Size),
+            true
+        };
     }
+
 
     class DirectoryPathView final {
     private:
         bool IsRoot_;
         FilePathView Path_;
 
-        constexpr DirectoryPathView(bool IsRoot, FilePathView Path) noexcept : IsRoot_(IsRoot), Path_(Path) {}
+        constexpr DirectoryPathView(bool IsRoot, FilePathView Path) noexcept
+            : IsRoot_(IsRoot),
+              Path_(Path) {}
 
     public:
         [[nodiscard]] static constexpr DirectoryPathView Root() noexcept {
-            return DirectoryPathView(true, FilePathView::Validate("root").Value);
+            return DirectoryPathView(
+                true,
+                FilePathView(nullptr, 0U)
+            );
         }
 
         [[nodiscard]] static constexpr DirectoryPathView NonRoot(FilePathView Path) noexcept {
             return DirectoryPathView(false, Path);
         }
 
-        [[nodiscard]] constexpr bool IsRoot() const noexcept { return IsRoot_; }
-        [[nodiscard]] constexpr FilePathView Path() const noexcept { return Path_; }
+        [[nodiscard]] constexpr bool IsRoot() const noexcept {
+            return IsRoot_;
+        }
+
+        [[nodiscard]] constexpr FilePathView Path() const noexcept {
+            return Path_;
+        }
+
     };
+
+
+    namespace Detail {
+
+        /// Internal bridge used by conforming providers to construct trusted callback text.
+        struct PersistenceProviderAccess final {
+
+            [[nodiscard]] static constexpr TextView MakeTextView(
+                const char* Data,
+                std::size_t Size
+            ) noexcept {
+                return TextView(Data, Size);
+            }
+
+        };
+
+    } // ESPressio::Persistence::Detail
 
 } // ESPressio::Persistence
