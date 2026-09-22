@@ -8,6 +8,7 @@
 
 namespace ESPressio::Persistence::Detail {
 
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     concept ExactMandatoryKeyValueStorageOperations =
         requires {
@@ -25,6 +26,7 @@ namespace ESPressio::Persistence::Detail {
         };
 
 
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     concept ExactReadValueAtOperation =
         requires {
@@ -36,6 +38,7 @@ namespace ESPressio::Persistence::Detail {
         };
 
 
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     concept ExactClearAllOperation =
         requires {
@@ -43,6 +46,7 @@ namespace ESPressio::Persistence::Detail {
         };
 
 
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     concept ExactKeyValueCapacityOperation =
         requires {
@@ -52,6 +56,7 @@ namespace ESPressio::Persistence::Detail {
         };
 
 
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     consteval void ValidateKeyValueStorageProvider() {
         static_assert(
