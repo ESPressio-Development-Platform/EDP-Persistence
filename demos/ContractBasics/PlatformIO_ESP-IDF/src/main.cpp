@@ -1,4 +1,4 @@
-#include <cstdio>
+#include <stdio.h>
 
 #include <ESPressio_Persistence.hpp>
 
@@ -10,7 +10,7 @@ extern "C" void app_main() {
     const auto Path = FilePathView::Validate("state/current.bin");
 
     if (!Path.IsValuePresent) {
-        std::printf("Path validation failed.\n");
+        printf("Path validation failed.\n");
         return;
     }
 
@@ -20,9 +20,9 @@ extern "C" void app_main() {
     );
 
     if (RangeEnd.Status != StorageArithmeticStatus::Succeeded) {
-        std::printf("Storage range overflow.\n");
+        printf("Storage range overflow.\n");
         return;
     }
 
-    std::printf("EDP-Persistence contract basics ready.\n");
+    printf("EDP-Persistence contract basics ready.\n");
 }
