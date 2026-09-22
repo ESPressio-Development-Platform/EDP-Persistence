@@ -9,6 +9,7 @@ namespace ESPressio::Persistence {
 
     namespace Detail {
 
+        /// TProvider is the provider type being constrained or validated.
         template<class TProvider>
         concept PersistenceProviderDeclaration = requires {
             typename TProvider::ProviderDeclarationTag;
@@ -17,6 +18,7 @@ namespace ESPressio::Persistence {
         } && std::is_same_v<typename TProvider::CompositionDomain, Domain>;
 
 
+        /// TProvider is the provider type being constrained or validated.
         template<class TProvider>
         [[nodiscard]] consteval bool IsFileStorageProviderContractValid() {
             if constexpr (!PersistenceProviderDeclaration<TProvider>) {
@@ -177,6 +179,7 @@ namespace ESPressio::Persistence {
         }
 
 
+        /// TProvider is the provider type being constrained or validated.
         template<class TProvider>
         [[nodiscard]] consteval bool IsKeyValueStorageProviderContractValid() {
             if constexpr (!PersistenceProviderDeclaration<TProvider>) {
@@ -267,6 +270,7 @@ namespace ESPressio::Persistence {
 
 
     /// Validates every Persistence capability advertised by one provider with focused diagnostics.
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     consteval void ValidatePersistenceProvider() {
         static_assert(
@@ -295,12 +299,14 @@ namespace ESPressio::Persistence {
 
 
     /// Constrains a type to the complete FileStorage provider contract.
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     concept FileStorageProvider =
         Detail::IsFileStorageProviderContractValid<TProvider>();
 
 
     /// Constrains a type to the complete KeyValueStorage provider contract.
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     concept KeyValueStorageProvider =
         Detail::IsKeyValueStorageProviderContractValid<TProvider>();
