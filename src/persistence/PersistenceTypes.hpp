@@ -258,6 +258,7 @@ namespace ESPressio::Persistence {
 
 
     /// Tests one understood fact bit without requiring exact-mask equality.
+    /// TFact is the scoped fact enum containing the requested bit.
     template<class TFact>
     [[nodiscard]] constexpr bool HasFact(std::uint8_t Facts, TFact Fact) noexcept {
         return (Facts & static_cast<std::uint8_t>(Fact)) != 0U;
