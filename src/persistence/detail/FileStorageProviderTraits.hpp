@@ -8,6 +8,7 @@
 
 namespace ESPressio::Persistence::Detail {
 
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     concept ExactMandatoryFileStorageOperations =
         requires {
@@ -26,6 +27,7 @@ namespace ESPressio::Persistence::Detail {
         };
 
 
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     concept ExactDirectoryMutationOperations =
         requires {
@@ -34,6 +36,7 @@ namespace ESPressio::Persistence::Detail {
         };
 
 
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     concept ExactRenameOperation =
         requires {
@@ -44,6 +47,7 @@ namespace ESPressio::Persistence::Detail {
         };
 
 
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     concept ExactAppendOperation =
         requires {
@@ -54,6 +58,7 @@ namespace ESPressio::Persistence::Detail {
         };
 
 
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     concept ExactWriteFileAtOperation =
         requires {
@@ -65,6 +70,7 @@ namespace ESPressio::Persistence::Detail {
         };
 
 
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     concept ExactFileCapacityOperation =
         requires {
@@ -74,6 +80,7 @@ namespace ESPressio::Persistence::Detail {
         };
 
 
+    /// TProvider is the provider type being constrained or validated.
     template<class TProvider>
     consteval void ValidateFileStorageProvider() {
         static_assert(
