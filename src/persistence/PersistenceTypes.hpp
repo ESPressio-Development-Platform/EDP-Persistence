@@ -17,21 +17,21 @@ namespace ESPressio::Persistence {
         /// Constructs a storage size from its underlying value.
         explicit constexpr StorageSize(std::uint64_t Value) noexcept : RawValue(Value) {}
 
-        friend constexpr bool operator==(StorageSize, StorageSize) noexcept = default;
+        /// Compares two storage sizes for equality.\n        friend constexpr bool operator==(StorageSize, StorageSize) noexcept = default;
 
-        [[nodiscard]] friend constexpr bool operator<(StorageSize Left, StorageSize Right) noexcept {
+        /// Orders two storage sizes by their underlying byte counts.\n        [[nodiscard]] friend constexpr bool operator<(StorageSize Left, StorageSize Right) noexcept {
             return Left.RawValue < Right.RawValue;
         }
 
-        [[nodiscard]] friend constexpr bool operator<=(StorageSize Left, StorageSize Right) noexcept {
+        /// Determines whether the left storage size does not exceed the right.\n        [[nodiscard]] friend constexpr bool operator<=(StorageSize Left, StorageSize Right) noexcept {
             return Left.RawValue <= Right.RawValue;
         }
 
-        [[nodiscard]] friend constexpr bool operator>(StorageSize Left, StorageSize Right) noexcept {
+        /// Determines whether the left storage size exceeds the right.\n        [[nodiscard]] friend constexpr bool operator>(StorageSize Left, StorageSize Right) noexcept {
             return Left.RawValue > Right.RawValue;
         }
 
-        [[nodiscard]] friend constexpr bool operator>=(StorageSize Left, StorageSize Right) noexcept {
+        /// Determines whether the left storage size is at least the right.\n        [[nodiscard]] friend constexpr bool operator>=(StorageSize Left, StorageSize Right) noexcept {
             return Left.RawValue >= Right.RawValue;
         }
 
@@ -50,7 +50,7 @@ namespace ESPressio::Persistence {
         /// Constructs a storage offset from its underlying value.
         explicit constexpr StorageOffset(std::uint64_t Value) noexcept : RawValue(Value) {}
 
-        friend constexpr bool operator==(StorageOffset, StorageOffset) noexcept = default;
+        /// Compares two storage offsets for equality.\n        friend constexpr bool operator==(StorageOffset, StorageOffset) noexcept = default;
 
     };
 
