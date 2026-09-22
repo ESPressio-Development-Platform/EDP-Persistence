@@ -177,7 +177,7 @@ namespace ESPressio::Persistence::Tests {
 
     static_assert(CheckedAdd(StorageSize{10U}, StorageSize{20U}).Succeeded);
     static_assert(CheckedAdd(StorageSize{10U}, StorageSize{20U}).Value == StorageSize{30U});
-    static_assert(!CheckedAdd(StorageSize{UINT64_MAX}, StorageSize{1U}).Succeeded);
+    static_assert(!CheckedAdd(StorageSize{~std::uint64_t{0U}}, StorageSize{1U}).Succeeded);
 
 } // ESPressio::Persistence::Tests
 
