@@ -1,6 +1,10 @@
 # EDP-Persistence Dependency Graph
 
-- EDP-Persistence
-  - EDP-System
+```text
+EDP-Persistence
+└── EDP-System (mandatory)
+```
 
-No other EDP library is a mandatory dependency of the abstract Persistence contract.
+EDP-Persistence has no optional EDP dependencies.
+
+Concrete provider repositories may consume additional EDP facilities such as EDP-Memory or EDP-Platform according to their implementation needs and applicable policy, but those dependencies are not imposed by the abstract EDP-Persistence library.
