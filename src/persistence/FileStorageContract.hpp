@@ -32,6 +32,7 @@ namespace ESPressio::Persistence {
 
 
     /// Callback accepted by FileStorage directory enumeration.
+    /// TCallback is the caller-owned callback type being constrained.
     template<class TCallback>
     concept FileEnumerationCallback = requires(
         TCallback& Callback,
@@ -50,8 +51,13 @@ namespace ESPressio::Persistence {
             FileEnumerationCallbackProbe& operator=(const FileEnumerationCallbackProbe&) = delete;
 
         public:
+
+            // Probe operations.
+
+            /// Constructs a callback probe used only for compile-time provider validation.
             FileEnumerationCallbackProbe() = default;
 
+            /// Accepts one FileStorage enumeration entry during compile-time expression checking.
             [[nodiscard]] EnumerationControl operator()(const FileEnumerationEntry&) noexcept {
                 return EnumerationControl::Continue;
             }
@@ -59,6 +65,7 @@ namespace ESPressio::Persistence {
         };
 
 
+        /// TProvider is the provider type whose operation surface is being inspected.
         template<class TProvider>
         concept HasMandatoryFileStorageOperations = requires(
             TProvider& MutableProvider,
@@ -76,6 +83,7 @@ namespace ESPressio::Persistence {
         };
 
 
+        /// TProvider is the provider type whose operation surface is being inspected.
         template<class TProvider>
         concept HasDirectoryMutationOperations = requires(
             TProvider& Provider,
@@ -86,6 +94,7 @@ namespace ESPressio::Persistence {
         };
 
 
+        /// TProvider is the provider type whose operation surface is being inspected.
         template<class TProvider>
         concept HasDirectoryEnumerationOperation = requires(
             const TProvider& Provider,
@@ -97,6 +106,7 @@ namespace ESPressio::Persistence {
         };
 
 
+        /// TProvider is the provider type whose operation surface is being inspected.
         template<class TProvider>
         concept HasRenameOperation = requires(
             TProvider& Provider,
@@ -107,6 +117,7 @@ namespace ESPressio::Persistence {
         };
 
 
+        /// TProvider is the provider type whose operation surface is being inspected.
         template<class TProvider>
         concept HasAppendOperation = requires(
             TProvider& Provider,
@@ -117,6 +128,7 @@ namespace ESPressio::Persistence {
         };
 
 
+        /// TProvider is the provider type whose operation surface is being inspected.
         template<class TProvider>
         concept HasWriteFileAtOperation = requires(
             TProvider& Provider,
@@ -128,6 +140,7 @@ namespace ESPressio::Persistence {
         };
 
 
+        /// TProvider is the provider type whose operation surface is being inspected.
         template<class TProvider>
         concept HasFileCapacityOperation = requires(const TProvider& Provider) {
             { Provider.GetFileStorageCapacity() } noexcept -> std::same_as<CapacityQueryResult>;
