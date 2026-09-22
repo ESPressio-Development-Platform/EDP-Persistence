@@ -55,10 +55,23 @@ namespace ESPressio::Persistence {
     };
 
 
-    /// Reports whether a checked storage-size addition succeeded.
+    enum class StorageArithmeticStatus : std::uint8_t {
+        Succeeded = 0U,
+        Overflow = 1U
+    };
+
+
+    /// Result of checked storage-size arithmetic.
     struct CheckedStorageSizeResult final {
+
+        // Operation result.
+
+        /// Outcome of the checked arithmetic operation.
+        StorageArithmeticStatus Status;
+
+        /// Resulting value, normalized to zero when the operation does not succeed.
         StorageSize Value;
-        bool Succeeded;
+
     };
 
 
@@ -70,17 +83,27 @@ namespace ESPressio::Persistence {
         constexpr auto Maximum = ~std::uint64_t{0U};
 
         if (Right.RawValue > Maximum - Left.RawValue) {
-            return {StorageSize{}, false};
+            return {StorageArithmeticStatus::Overflow, StorageSize{}};
         }
 
-        return {StorageSize{Left.RawValue + Right.RawValue}, true};
+        return {
+            StorageArithmeticStatus::Succeeded,
+            StorageSize{Left.RawValue + Right.RawValue}
+        };
     }
 
 
-    /// Reports whether adding an extent to a storage offset succeeded.
+    /// Result of checked storage-offset arithmetic.
     struct CheckedStorageOffsetResult final {
+
+        // Operation result.
+
+        /// Outcome of the checked arithmetic operation.
+        StorageArithmeticStatus Status;
+
+        /// Resulting value, normalized to zero when the operation does not succeed.
         StorageOffset Value;
-        bool Succeeded;
+
     };
 
 
@@ -92,12 +115,12 @@ namespace ESPressio::Persistence {
         constexpr auto Maximum = ~std::uint64_t{0U};
 
         if (Extent.RawValue > Maximum - Offset.RawValue) {
-            return {StorageOffset{}, false};
+            return {StorageArithmeticStatus::Overflow, StorageOffset{}};
         }
 
         return {
-            StorageOffset{Offset.RawValue + Extent.RawValue},
-            true
+            StorageArithmeticStatus::Succeeded,
+            StorageOffset{Offset.RawValue + Extent.RawValue}
         };
     }
 
