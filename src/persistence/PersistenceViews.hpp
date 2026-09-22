@@ -114,7 +114,7 @@ namespace ESPressio::Persistence {
             : Data_(Data),
               Size_(Size) {}
 
-        friend struct Detail::PersistenceProviderAccess;
+        /// Grants the provider bridge access to trusted TextView construction.\n        friend struct Detail::PersistenceProviderAccess;
 
     public:
         /// Constructs an empty trusted text view.
@@ -156,7 +156,7 @@ namespace ESPressio::Persistence {
             : Data_(Data),
               Size_(Size) {}
 
-        friend class DirectoryPathView;
+        /// Allows DirectoryPathView to construct the distinguished provider-root representation.\n        friend class DirectoryPathView;
 
     public:
         struct ValidationResult;
@@ -171,11 +171,16 @@ namespace ESPressio::Persistence {
             return Size_;
         }
 
+        // Validation operations.
+
+        /// Validates a caller-owned UTF-8 byte range as a canonical FileStorage path.
         [[nodiscard]] static constexpr ValidationResult Validate(
             const char* Data,
             std::size_t Size
         ) noexcept;
 
+        /// TSize is the compile-time array extent including the string terminator.
+        /// Validates a null-terminated FileStorage path literal.
         template<std::size_t TSize>
         [[nodiscard]] static constexpr ValidationResult Validate(const char (&Value)[TSize]) noexcept {
             static_assert(TSize > 0U);
@@ -297,6 +302,10 @@ namespace ESPressio::Persistence {
               Size_(Size) {}
 
     public:
+
+        // Validation result declaration.
+
+        /// Structured result returned by KeyView validation.
         struct ValidationResult;
 
         /// Returns the first referenced text byte.
@@ -309,11 +318,16 @@ namespace ESPressio::Persistence {
             return Size_;
         }
 
+        // Validation operations.
+
+        /// Validates a caller-owned UTF-8 byte range as a canonical KeyValueStorage key.
         [[nodiscard]] static constexpr ValidationResult Validate(
             const char* Data,
             std::size_t Size
         ) noexcept;
 
+        /// TSize is the compile-time array extent including the string terminator.
+        /// Validates a null-terminated KeyValueStorage key literal.
         template<std::size_t TSize>
         [[nodiscard]] static constexpr ValidationResult Validate(const char (&Value)[TSize]) noexcept {
             static_assert(TSize > 0U);
@@ -391,6 +405,9 @@ namespace ESPressio::Persistence {
               Path_(Path) {}
 
     public:
+
+        // Directory address operations.
+
         /// Returns the semantic provider-root directory address.
         [[nodiscard]] static constexpr DirectoryPathView Root() noexcept {
             return DirectoryPathView(
