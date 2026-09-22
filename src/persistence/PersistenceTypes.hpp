@@ -67,7 +67,7 @@ namespace ESPressio::Persistence {
         StorageSize Left,
         StorageSize Right
     ) noexcept {
-        constexpr auto Maximum = UINT64_MAX;
+        constexpr auto Maximum = ~std::uint64_t{0U};
 
         if (Right.RawValue > Maximum - Left.RawValue) {
             return {StorageSize{}, false};
