@@ -114,7 +114,8 @@ namespace ESPressio::Persistence {
             : Data_(Data),
               Size_(Size) {}
 
-        /// Grants the provider bridge access to trusted TextView construction.\n        friend struct Detail::PersistenceProviderAccess;
+        /// Grants the provider bridge access to trusted TextView construction.
+        friend struct Detail::PersistenceProviderAccess;
 
     public:
         /// Constructs an empty trusted text view.
@@ -156,7 +157,12 @@ namespace ESPressio::Persistence {
             : Data_(Data),
               Size_(Size) {}
 
-        /// Allows DirectoryPathView to construct the distinguished provider-root representation.\n        friend class DirectoryPathView;
+        /// Allows DirectoryPathView to construct the distinguished provider-root representation.
+
+        /// Grants validated factories access to the private semantic constructor.
+        friend struct ValidationResult;
+
+        friend class DirectoryPathView;
 
     public:
         struct ValidationResult;
@@ -182,10 +188,7 @@ namespace ESPressio::Persistence {
         /// TSize is the compile-time array extent including the string terminator.
         /// Validates a null-terminated FileStorage path literal.
         template<std::size_t TSize>
-        [[nodiscard]] static constexpr ValidationResult Validate(const char (&Value)[TSize]) noexcept {
-            static_assert(TSize > 0U);
-            return Validate(Value, TSize - 1U);
-        }
+        [[nodiscard]] static constexpr ValidationResult Validate(const char (&Value)[TSize]) noexcept;
 
     };
 
@@ -285,6 +288,15 @@ namespace ESPressio::Persistence {
     }
 
 
+    template<std::size_t TSize>
+    [[nodiscard]] constexpr FilePathView::ValidationResult FilePathView::Validate(
+        const char (&Value)[TSize]
+    ) noexcept {
+        static_assert(TSize > 0U);
+        return Validate(Value, TSize - 1U);
+    }
+
+
     class KeyView final {
     private:
 
@@ -300,6 +312,9 @@ namespace ESPressio::Persistence {
         constexpr KeyView(const char* Data, std::size_t Size) noexcept
             : Data_(Data),
               Size_(Size) {}
+
+        /// Grants validated factories access to the private semantic constructor.
+        friend struct ValidationResult;
 
     public:
 
@@ -329,10 +344,7 @@ namespace ESPressio::Persistence {
         /// TSize is the compile-time array extent including the string terminator.
         /// Validates a null-terminated KeyValueStorage key literal.
         template<std::size_t TSize>
-        [[nodiscard]] static constexpr ValidationResult Validate(const char (&Value)[TSize]) noexcept {
-            static_assert(TSize > 0U);
-            return Validate(Value, TSize - 1U);
-        }
+        [[nodiscard]] static constexpr ValidationResult Validate(const char (&Value)[TSize]) noexcept;
 
     };
 
@@ -385,6 +397,15 @@ namespace ESPressio::Persistence {
             KeyView(Data, Size),
             true
         };
+    }
+
+
+    template<std::size_t TSize>
+    [[nodiscard]] constexpr KeyView::ValidationResult KeyView::Validate(
+        const char (&Value)[TSize]
+    ) noexcept {
+        static_assert(TSize > 0U);
+        return Validate(Value, TSize - 1U);
     }
 
 
