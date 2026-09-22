@@ -100,7 +100,13 @@ namespace ESPressio::Persistence {
 
     class TextView final {
     private:
+
+        // Referenced text.
+
+        /// First byte of trusted UTF-8 text, or null for an empty view.
         const char* Data_;
+
+        /// Number of meaningful UTF-8 bytes in the view.
         std::size_t Size_;
 
         constexpr TextView(const char* Data, std::size_t Size) noexcept
@@ -131,7 +137,13 @@ namespace ESPressio::Persistence {
 
     class FilePathView final {
     private:
+
+        // Referenced path.
+
+        /// First byte of the validated provider-relative path.
         const char* Data_;
+
+        /// Number of UTF-8 bytes in the validated path.
         std::size_t Size_;
 
         constexpr FilePathView(const char* Data, std::size_t Size) noexcept
@@ -166,9 +178,18 @@ namespace ESPressio::Persistence {
 
 
     struct FilePathView::ValidationResult final {
+
+        // Validation result.
+
+        /// Outcome of provider-independent FileStorage path validation.
         FilePathValidationStatus Status;
+
+        /// Validated semantic view when IsValuePresent is true.
         FilePathView Value;
+
+        /// Indicates whether Value contains a successfully validated path.
         bool IsValuePresent;
+
     };
 
 
@@ -176,7 +197,10 @@ namespace ESPressio::Persistence {
         const char* Data,
         std::size_t Size
     ) noexcept {
-        const FilePathView EmptyValue(nullptr, 0U);
+        const FilePathView EmptyValue(
+            nullptr,
+            0U
+        );
 
         if (Size == 0U) {
             return {FilePathValidationStatus::Empty, EmptyValue, false};
@@ -250,7 +274,13 @@ namespace ESPressio::Persistence {
 
     class KeyView final {
     private:
+
+        // Referenced key.
+
+        /// First byte of the validated key.
         const char* Data_;
+
+        /// Number of UTF-8 bytes in the validated key.
         std::size_t Size_;
 
         constexpr KeyView(const char* Data, std::size_t Size) noexcept
@@ -283,9 +313,18 @@ namespace ESPressio::Persistence {
 
 
     struct KeyView::ValidationResult final {
+
+        // Validation result.
+
+        /// Outcome of provider-independent KeyValueStorage key validation.
         KeyValidationStatus Status;
+
+        /// Validated semantic view when IsValuePresent is true.
         KeyView Value;
+
+        /// Indicates whether Value contains a successfully validated key.
         bool IsValuePresent;
+
     };
 
 
@@ -293,7 +332,10 @@ namespace ESPressio::Persistence {
         const char* Data,
         std::size_t Size
     ) noexcept {
-        const KeyView EmptyValue(nullptr, 0U);
+        const KeyView EmptyValue(
+            nullptr,
+            0U
+        );
 
         if (Size == 0U) {
             return {KeyValidationStatus::Empty, EmptyValue, false};
@@ -323,7 +365,13 @@ namespace ESPressio::Persistence {
 
     class DirectoryPathView final {
     private:
+
+        // Directory identity.
+
+        /// Indicates that this view identifies provider root rather than a non-root path.
         bool IsRoot_;
+
+        /// Validated non-root path; ignored when IsRoot_ is true.
         FilePathView Path_;
 
         constexpr DirectoryPathView(bool IsRoot, FilePathView Path) noexcept
