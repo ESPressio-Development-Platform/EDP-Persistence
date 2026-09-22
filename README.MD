@@ -23,20 +23,13 @@ A provider may offer either capability or both.
 - Unsupported optional operations are structurally absent.
 - Readiness is observational; lifecycle and concrete configuration belong to Bootstrap/provider owners.
 - No serialization, configuration, security, OTA, or application-data semantics are owned by this library.
+- Persistence APIs are not promised to be ISR-safe. Keep Persistence work outside ISR context.
 
 ## Addressing
 
 `FilePathView` and `KeyView` are validated, non-owning UTF-8 semantic views. Validation is allocation-free and provider-independent.
 
-File paths are canonical provider-relative paths:
-
-- no leading or trailing `/`;
-- no empty segments;
-- no `.` or `..` segments;
-- no backslash;
-- no embedded NUL.
-
-Keys are flat UTF-8 identifiers. Characters such as `/` and `.` have no special Persistence meaning for keys.
+File paths are canonical provider-relative paths: no leading/trailing separator, empty segments, dot/parent segments, backslash, embedded NUL, or invalid UTF-8. Keys are flat UTF-8 identifiers; characters such as `/` and `.` have no special Persistence meaning.
 
 `DirectoryPathView::Root()` represents provider root without overloading an empty file path.
 
@@ -44,22 +37,34 @@ Keys are flat UTF-8 identifiers. Characters such as `/` and `.` have no special 
 
 Providers advertise `FileStorage` and/or `KeyValueStorage` Offers through EDP-System Composition.
 
-Use `ValidatePersistenceProvider<T>()` to obtain focused compile-time diagnostics for a provider implementation. `FileStorageProvider` and `KeyValueStorageProvider` are available for generic constraints.
+Use `ValidatePersistenceProvider<T>()` for focused compile-time diagnostics. `FileStorageProvider` and `KeyValueStorageProvider` are available for generic constraints.
 
-The optional open-ended `StorageType` Attribute may describe backing technology, but it carries no semantic guarantee.
-
-## Dependency boundary
-
-EDP-Persistence depends only on EDP-System.
-
-Concrete providers that need byte-copy primitives consume EDP-Memory in their own implementation repository. Platform/SDK facilities remain behind EDP-Platform and its concrete Platform repositories.
-
-## Tests
-
-`tests/PersistenceContractTests.cpp` contains positive contract, validation, and constexpr address tests.
-
-`tests/compile_fail/` contains representative provider declarations that are required to fail compilation. These tests intentionally do not depend on compiler-specific diagnostic text.
+The optional open-ended `StorageType` Attribute may describe backing technology, but carries no semantic guarantee.
 
 ## Documentation
 
-See `docs/CONTRACT.MD` for the complete abstract contract and `examples/ProviderContractExample.cpp` for a minimal provider declaration.
+- [Abstract contract](./docs/CONTRACT.MD) — capability operations, commit/failure semantics, concurrency, capacity, and provider validation.
+- [Memory and ownership](./docs/MEMORY_AND_OWNERSHIP.MD) — deterministic caller-owned transfer model and lifetime rules.
+- [Composition and providers](./docs/COMPOSITION_AND_PROVIDERS.MD) — Properties, optional structural operations, provider topology, and validation.
+- [Results and enumeration](./docs/RESULTS_AND_ENUMERATION.MD) — result invariants, fact masks, truncation, and enumeration behaviour.
+- [Build baseline](./docs/BUILDING.MD) — C++20, PIOArduino recommendation, and PlatformIO configuration.
+- [Demos](./demos/README.MD) — buildable contract-consumption demonstrations for the policy-required targets.
+
+## Dependencies
+
+- EDP-Persistence
+  - EDP-System
+
+There are no optional EDP dependencies in the abstract contract. Concrete providers may introduce their own dependencies in their respective repositories; those are not dependencies of EDP-Persistence.
+
+See [DEPENDENCY_GRAPH.MD](./DEPENDENCY_GRAPH.MD) for the repository dependency graph.
+
+## Tests
+
+`tests/PersistenceContractTests.cpp` contains positive contract, validation, result/fact, arithmetic, and constexpr address tests.
+
+`tests/compile_fail/` contains provider declarations that are required to fail compilation for invalid compile-time contracts. They intentionally do not depend on compiler-specific diagnostic prose.
+
+## Build baseline
+
+EDP-Persistence requires C++20. New Arduino consumers should prefer PIOArduino. Developers retaining conventional PlatformIO must select an Arduino-ESP32 release/toolchain capable of compiling C++20 and explicitly configure the project for `-std=gnu++20`. See [Build baseline](./docs/BUILDING.MD) for details.
