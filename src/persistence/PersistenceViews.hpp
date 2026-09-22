@@ -28,6 +28,9 @@ namespace ESPressio::Persistence {
 
     namespace Detail {
 
+        struct PersistenceProviderAccess;
+
+
         [[nodiscard]] constexpr bool IsContinuationByte(unsigned char Value) noexcept {
             return (Value & 0xC0U) == 0x80U;
         }
