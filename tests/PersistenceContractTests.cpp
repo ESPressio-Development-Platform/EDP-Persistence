@@ -168,12 +168,12 @@ namespace ESPressio::Persistence::Tests {
         return true;
     }());
 
-    static_assert(FilePathView::Validate("folder/file.bin").HasValue);
-    static_assert(!FilePathView::Validate("/absolute").HasValue);
-    static_assert(!FilePathView::Validate("folder//file").HasValue);
-    static_assert(!FilePathView::Validate("folder/../file").HasValue);
-    static_assert(KeyView::Validate("settings/display").HasValue);
-    static_assert(!KeyView::Validate("").HasValue);
+    static_assert(FilePathView::Validate("folder/file.bin").IsValuePresent);
+    static_assert(!FilePathView::Validate("/absolute").IsValuePresent);
+    static_assert(!FilePathView::Validate("folder//file").IsValuePresent);
+    static_assert(!FilePathView::Validate("folder/../file").IsValuePresent);
+    static_assert(KeyView::Validate("settings/display").IsValuePresent);
+    static_assert(!KeyView::Validate("").IsValuePresent);
 
     static_assert(CheckedAdd(StorageSize{10U}, StorageSize{20U}).Succeeded);
     static_assert(CheckedAdd(StorageSize{10U}, StorageSize{20U}).Value == StorageSize{30U});
@@ -191,16 +191,16 @@ int main() {
     using namespace ESPressio::Persistence;
 
     const auto Path = FilePathView::Validate("config/data.bin");
-    assert(Path.HasValue);
+    assert(Path.IsValuePresent);
     assert(Path.Status == FilePathValidationStatus::Succeeded);
     assert(Path.Value.Size() == 15U);
 
     const auto Key = KeyView::Validate("display/theme");
-    assert(Key.HasValue);
+    assert(Key.IsValuePresent);
     assert(Key.Status == KeyValidationStatus::Succeeded);
 
     const auto InvalidUtf8 = KeyView::Validate("\xC0\xAF", 2U);
-    assert(!InvalidUtf8.HasValue);
+    assert(!InvalidUtf8.IsValuePresent);
     assert(InvalidUtf8.Status == KeyValidationStatus::InvalidUtf8);
 
     return 0;
