@@ -109,26 +109,26 @@ namespace ESPressio::Persistence {
         /// Number of meaningful UTF-8 bytes in the view.
         std::size_t Size_;
 
-        constexpr TextView(const char* Data, std::size_t Size) noexcept
+        /// Constructs trusted text for provider-owned callback publication.\n        constexpr TextView(const char* Data, std::size_t Size) noexcept
             : Data_(Data),
               Size_(Size) {}
 
         friend struct Detail::PersistenceProviderAccess;
 
     public:
-        constexpr TextView() noexcept
+        /// Constructs an empty trusted text view.\n        constexpr TextView() noexcept
             : Data_(nullptr),
               Size_(0U) {}
 
-        [[nodiscard]] constexpr const char* Data() const noexcept {
+        /// Returns the first referenced text byte.\n        [[nodiscard]] constexpr const char* Data() const noexcept {
             return Data_;
         }
 
-        [[nodiscard]] constexpr std::size_t Size() const noexcept {
+        /// Returns the number of meaningful referenced bytes.\n        [[nodiscard]] constexpr std::size_t Size() const noexcept {
             return Size_;
         }
 
-        [[nodiscard]] constexpr bool IsEmpty() const noexcept {
+        /// Indicates whether the view contains zero meaningful bytes.\n        [[nodiscard]] constexpr bool IsEmpty() const noexcept {
             return Size_ == 0U;
         }
 
@@ -146,7 +146,7 @@ namespace ESPressio::Persistence {
         /// Number of UTF-8 bytes in the validated path.
         std::size_t Size_;
 
-        constexpr FilePathView(const char* Data, std::size_t Size) noexcept
+        /// Constructs a path after successful provider-independent validation.\n        constexpr FilePathView(const char* Data, std::size_t Size) noexcept
             : Data_(Data),
               Size_(Size) {}
 
@@ -155,11 +155,11 @@ namespace ESPressio::Persistence {
     public:
         struct ValidationResult;
 
-        [[nodiscard]] constexpr const char* Data() const noexcept {
+        /// Returns the first referenced text byte.\n        [[nodiscard]] constexpr const char* Data() const noexcept {
             return Data_;
         }
 
-        [[nodiscard]] constexpr std::size_t Size() const noexcept {
+        /// Returns the number of meaningful referenced bytes.\n        [[nodiscard]] constexpr std::size_t Size() const noexcept {
             return Size_;
         }
 
@@ -283,18 +283,18 @@ namespace ESPressio::Persistence {
         /// Number of UTF-8 bytes in the validated key.
         std::size_t Size_;
 
-        constexpr KeyView(const char* Data, std::size_t Size) noexcept
+        /// Constructs a key after successful provider-independent validation.\n        constexpr KeyView(const char* Data, std::size_t Size) noexcept
             : Data_(Data),
               Size_(Size) {}
 
     public:
         struct ValidationResult;
 
-        [[nodiscard]] constexpr const char* Data() const noexcept {
+        /// Returns the first referenced text byte.\n        [[nodiscard]] constexpr const char* Data() const noexcept {
             return Data_;
         }
 
-        [[nodiscard]] constexpr std::size_t Size() const noexcept {
+        /// Returns the number of meaningful referenced bytes.\n        [[nodiscard]] constexpr std::size_t Size() const noexcept {
             return Size_;
         }
 
@@ -374,27 +374,27 @@ namespace ESPressio::Persistence {
         /// Validated non-root path; ignored when IsRoot_ is true.
         FilePathView Path_;
 
-        constexpr DirectoryPathView(bool IsRoot, FilePathView Path) noexcept
+        /// Constructs either provider root or a validated non-root directory address.\n        constexpr DirectoryPathView(bool IsRoot, FilePathView Path) noexcept
             : IsRoot_(IsRoot),
               Path_(Path) {}
 
     public:
-        [[nodiscard]] static constexpr DirectoryPathView Root() noexcept {
+        /// Returns the semantic provider-root directory address.\n        [[nodiscard]] static constexpr DirectoryPathView Root() noexcept {
             return DirectoryPathView(
                 true,
                 FilePathView(nullptr, 0U)
             );
         }
 
-        [[nodiscard]] static constexpr DirectoryPathView NonRoot(FilePathView Path) noexcept {
+        /// Wraps a validated FileStorage path as a non-root directory address.\n        [[nodiscard]] static constexpr DirectoryPathView NonRoot(FilePathView Path) noexcept {
             return DirectoryPathView(false, Path);
         }
 
-        [[nodiscard]] constexpr bool IsRoot() const noexcept {
+        /// Indicates whether this address identifies provider root.\n        [[nodiscard]] constexpr bool IsRoot() const noexcept {
             return IsRoot_;
         }
 
-        [[nodiscard]] constexpr FilePathView Path() const noexcept {
+        /// Returns the non-root path; callers use this only when IsRoot() is false.\n        [[nodiscard]] constexpr FilePathView Path() const noexcept {
             return Path_;
         }
 
@@ -406,7 +406,7 @@ namespace ESPressio::Persistence {
         /// Internal bridge used by conforming providers to construct trusted callback text.
         struct PersistenceProviderAccess final {
 
-            [[nodiscard]] static constexpr TextView MakeTextView(
+            /// Constructs trusted callback text from bytes already validated by a provider.\n            [[nodiscard]] static constexpr TextView MakeTextView(
                 const char* Data,
                 std::size_t Size
             ) noexcept {
