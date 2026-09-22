@@ -14,16 +14,10 @@ jobs:
       - name: Checkout EDP-Persistence
         uses: actions/checkout@v4
 
-      - name: Checkout EDP-System
-        uses: actions/checkout@v4
-        with:
-          repository: ESPressio-Development-Platform/EDP-System
-          path: .dependencies/EDP-System
-
       - name: Compile positive contract tests
         run: |
           g++ -std=c++20 -Wall -Wextra -Werror -pedantic \
-            -Isrc -I.dependencies/EDP-System/src \
+            -Itests/support -Isrc \
             tests/PersistenceContractTests.cpp \
             -o persistence-contract-tests
 
@@ -33,7 +27,7 @@ jobs:
       - name: Compile provider example
         run: |
           g++ -std=c++20 -Wall -Wextra -Werror -pedantic \
-            -Isrc -I.dependencies/EDP-System/src \
+            -Itests/support -Isrc \
             -c examples/ProviderContractExample.cpp \
             -o provider-example.o
 
@@ -44,7 +38,7 @@ jobs:
           for source in tests/compile_fail/*.cpp; do
             echo "Expecting compilation failure: ${source}"
             if g++ -std=c++20 -Wall -Wextra -Werror -pedantic \
-              -Isrc -I.dependencies/EDP-System/src \
+              -Itests/support -Isrc \
               -c "${source}" -o /tmp/compile-fail.o; then
               echo "ERROR: ${source} unexpectedly compiled successfully"
               exit 1
