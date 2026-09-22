@@ -168,7 +168,7 @@ namespace ESPressio::Persistence {
     struct FilePathView::ValidationResult final {
         FilePathValidationStatus Status;
         FilePathView Value;
-        bool HasValue;
+        bool IsValuePresent;
     };
 
 
@@ -285,7 +285,7 @@ namespace ESPressio::Persistence {
     struct KeyView::ValidationResult final {
         KeyValidationStatus Status;
         KeyView Value;
-        bool HasValue;
+        bool IsValuePresent;
     };
 
 
