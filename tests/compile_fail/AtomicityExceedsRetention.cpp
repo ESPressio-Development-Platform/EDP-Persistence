@@ -15,7 +15,7 @@ using Offer = Framework::Offer<KeyValueStorage,
  Framework::PropertyValue<KeyValueInvocationConcurrency,InvocationConcurrency::CallerSerialized>,
  Framework::PropertyValue<KeyValueFailurePreservation,FailurePreservation::PreservesCommittedState>,
  Framework::PropertyValue<KeyValueInterruptionAtomicity,InterruptionAtomicity::PowerLoss>>;
-struct Provider final:Framework::Provider<Domain,Framework::Provides<Offer>>{
+struct Provider final:Framework::Provider<Domain,Framework::Offers<Offer>>{
  bool IsKeyValueStorageReady()const noexcept{return true;}
  KeyValueSizeResult GetValueSize(KeyView)const noexcept{return {KeyValueSizeStatus::NotFound,{}};}
  KeyValueReadResult ReadValue(KeyView,DestinationBufferView)const noexcept{return {KeyValueReadStatus::NotFound,0U,0U,{}};}

@@ -23,7 +23,7 @@ using InvalidOffer = Framework::Offer<
 
 struct InvalidProvider final : Framework::Provider<
     Domain,
-    Framework::Provides<InvalidOffer>
+    Framework::Offers<InvalidOffer>
 > {};
 
 static_assert([]() consteval {

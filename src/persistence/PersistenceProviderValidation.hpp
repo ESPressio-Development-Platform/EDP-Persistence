@@ -14,7 +14,7 @@ namespace ESPressio::Persistence {
         concept PersistenceProviderDeclaration = requires {
             typename TProvider::ProviderDeclarationTag;
             typename TProvider::CompositionDomain;
-            typename TProvider::CompositionCapabilities;
+            typename TProvider::CompositionOffers;
         } && std::is_same_v<typename TProvider::CompositionDomain, Domain>;
 
 
@@ -23,11 +23,11 @@ namespace ESPressio::Persistence {
         [[nodiscard]] consteval bool IsFileStorageProviderContractValid() {
             if constexpr (!PersistenceProviderDeclaration<TProvider>) {
                 return false;
-            } else if constexpr (!TProvider::CompositionCapabilities::template Contains<FileStorage>) {
+            } else if constexpr (!TProvider::CompositionOffers::template Contains<FileStorage>) {
                 return false;
             } else {
                 using Properties =
-                    typename TProvider::CompositionCapabilities::template PropertiesFor<FileStorage>;
+                    typename TProvider::CompositionOffers::template PropertiesFor<FileStorage>;
 
                 if constexpr (!(
                     HasPropertyV<Properties, FileAccessMode> &&
@@ -184,11 +184,11 @@ namespace ESPressio::Persistence {
         [[nodiscard]] consteval bool IsKeyValueStorageProviderContractValid() {
             if constexpr (!PersistenceProviderDeclaration<TProvider>) {
                 return false;
-            } else if constexpr (!TProvider::CompositionCapabilities::template Contains<KeyValueStorage>) {
+            } else if constexpr (!TProvider::CompositionOffers::template Contains<KeyValueStorage>) {
                 return false;
             } else {
                 using Properties =
-                    typename TProvider::CompositionCapabilities::template PropertiesFor<KeyValueStorage>;
+                    typename TProvider::CompositionOffers::template PropertiesFor<KeyValueStorage>;
 
                 if constexpr (!(
                     HasPropertyV<Properties, KeyValueAccessMode> &&
@@ -279,9 +279,9 @@ namespace ESPressio::Persistence {
         );
 
         constexpr bool ProvidesFileStorage =
-            TProvider::CompositionCapabilities::template Contains<FileStorage>;
+            TProvider::CompositionOffers::template Contains<FileStorage>;
         constexpr bool ProvidesKeyValueStorage =
-            TProvider::CompositionCapabilities::template Contains<KeyValueStorage>;
+            TProvider::CompositionOffers::template Contains<KeyValueStorage>;
 
         static_assert(
             ProvidesFileStorage || ProvidesKeyValueStorage,

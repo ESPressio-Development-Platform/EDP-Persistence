@@ -65,12 +65,12 @@ namespace ESPressio::Persistence::Detail {
         );
 
         static_assert(
-            TProvider::CompositionCapabilities::template Contains<KeyValueStorage>,
+            TProvider::CompositionOffers::template Contains<KeyValueStorage>,
             "KeyValueStorage provider must advertise a KeyValueStorage Offer"
         );
 
         using Properties =
-            typename TProvider::CompositionCapabilities::template PropertiesFor<KeyValueStorage>;
+            typename TProvider::CompositionOffers::template PropertiesFor<KeyValueStorage>;
 
         static_assert(HasPropertyV<Properties, KeyValueAccessMode>);
         static_assert(HasPropertyV<Properties, KeyValueRetention>);

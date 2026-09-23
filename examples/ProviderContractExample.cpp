@@ -27,7 +27,7 @@ namespace Example {
 
     struct Provider final : Framework::Provider<
         Domain,
-        Framework::Provides<FileOffer>
+        Framework::Offers<FileOffer>
     > {
 
         [[nodiscard]] bool IsFileStorageReady() const noexcept {

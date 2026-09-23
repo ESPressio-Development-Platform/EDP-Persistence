@@ -89,12 +89,12 @@ namespace ESPressio::Persistence::Detail {
         );
 
         static_assert(
-            TProvider::CompositionCapabilities::template Contains<FileStorage>,
+            TProvider::CompositionOffers::template Contains<FileStorage>,
             "FileStorage provider must advertise a FileStorage Offer"
         );
 
         using Properties =
-            typename TProvider::CompositionCapabilities::template PropertiesFor<FileStorage>;
+            typename TProvider::CompositionOffers::template PropertiesFor<FileStorage>;
 
         static_assert(HasPropertyV<Properties, FileAccessMode>);
         static_assert(HasPropertyV<Properties, FileRetention>);

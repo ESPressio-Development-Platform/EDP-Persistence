@@ -16,7 +16,7 @@ using Offer = Framework::Offer<FileStorage,
  Framework::PropertyValue<WriteFileAtSupport,Support::Unsupported>,
  Framework::PropertyValue<FileCapacityReportingSupport,Support::Unsupported>,
  Framework::PropertyValue<FileInvocationConcurrency,InvocationConcurrency::CallerSerialized>>;
-struct Provider final:Framework::Provider<Domain,Framework::Provides<Offer>>{
+struct Provider final:Framework::Provider<Domain,Framework::Offers<Offer>>{
  bool IsFileStorageReady()const noexcept{return true;}
  FileSizeResult GetFileSize(FilePathView)const noexcept{return {FileSizeStatus::NotFound,{}};}
  FileReadResult ReadFileAt(FilePathView,StorageOffset,DestinationBufferView)const noexcept{return {FileReadStatus::NotFound,0U,0U,{}};}
