@@ -31,7 +31,7 @@ namespace ESPressio::Persistence::Tests {
 
     struct ReadOnlyFileProvider final : Framework::Provider<
         Domain,
-        Framework::Provides<ReadOnlyFileOffer>
+        Framework::Offers<ReadOnlyFileOffer>
     > {
 
         [[nodiscard]] bool IsFileStorageReady() const noexcept {
@@ -101,7 +101,7 @@ namespace ESPressio::Persistence::Tests {
 
     struct ReadWriteKeyProvider final : Framework::Provider<
         Domain,
-        Framework::Provides<ReadWriteKeyOffer>
+        Framework::Offers<ReadWriteKeyOffer>
     > {
 
         [[nodiscard]] bool IsKeyValueStorageReady() const noexcept {

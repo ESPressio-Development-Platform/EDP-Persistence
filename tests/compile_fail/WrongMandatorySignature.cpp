@@ -20,7 +20,7 @@ using InvalidOffer = Framework::Offer<
 
 struct InvalidProvider final : Framework::Provider<
     Domain,
-    Framework::Provides<InvalidOffer>
+    Framework::Offers<InvalidOffer>
 > {
     bool IsKeyValueStorageReady() const noexcept;
     KeyValueSizeResult GetValueSize(KeyView) const noexcept;

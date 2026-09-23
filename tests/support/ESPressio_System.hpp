@@ -180,7 +180,7 @@ namespace ESPressio::System::CompositionFramework {
     struct Provider {
         using ProviderDeclarationTag = void;
         using CompositionDomain = TDomain;
-        using CompositionCapabilities = TProvides;
+        using CompositionOffers = TProvides;
         using CompositionRequirements = TRequires;
         using CompositionDependencies = TDependsOn;
     };
