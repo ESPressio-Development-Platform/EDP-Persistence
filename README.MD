@@ -80,4 +80,4 @@ EDP-Persistence requires C++20. New Arduino consumers should prefer PIOArduino. 
 
 ## Arduino library packaging
 
-The repository includes standard Arduino `library.properties` metadata and exports `<ESPressio_Persistence.hpp>` as its root public include. Arduino IDE / Arduino CLI can therefore discover the platform-neutral Persistence contract as a normal installed or local Arduino library. This is packaging metadata only; Persistence semantics and dependency topology are unchanged.
+The repository includes both Arduino `library.properties` metadata and a framework-neutral PlatformIO `library.json` manifest, exporting `<ESPressio_Persistence.hpp>` as its root public include. Arduino IDE / Arduino CLI can therefore discover it as a normal installed or local Arduino library, while PlatformIO can activate the same platform-neutral contract under Arduino or pure ESP-IDF builds. This is packaging metadata only; Persistence semantics and dependency topology are unchanged.
