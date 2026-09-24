@@ -1,5 +1,8 @@
 # EDP-Persistence Dependency Graph
 
+> Revalidated: 2026-09-24 — Arduino and framework-neutral PlatformIO metadata were added for discoverability only; EDP-System remains the sole mandatory ESPressio dependency and no dependency edge changed.
+
+
 > Revalidated: 2026-09-23 — Composition Framework enhancement migration changes compile-time provider/requirement metadata and validation only; no ESPressio-library dependency edge changed.
 
 ```text
