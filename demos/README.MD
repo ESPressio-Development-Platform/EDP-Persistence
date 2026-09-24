@@ -9,3 +9,5 @@ The same logical demonstration is supplied for every target required by the ESPr
 - `ContractBasics/PlatformIO_ESP-IDF`
 
 Each target depends on EDP-System and EDP-Persistence and requires C++20. Platform-specific storage demonstrations belong to the future concrete `EDP-Persistence-*` provider repositories.
+
+The Arduino IDE target relies on the repository's `library.properties` metadata and root `<ESPressio_Persistence.hpp>` entry point, so a normal installed/local Arduino library layout is sufficient.
