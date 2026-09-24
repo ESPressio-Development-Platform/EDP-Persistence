@@ -76,3 +76,8 @@ The runner locates a sibling `EDP-System` checkout automatically, or accepts `--
 ## Build baseline
 
 EDP-Persistence requires C++20. New Arduino consumers should prefer PIOArduino. Developers retaining conventional PlatformIO must select an Arduino-ESP32 release/toolchain capable of compiling C++20 and explicitly configure the project for `-std=gnu++20`. See [Build baseline](./docs/BUILDING.MD) for details.
+
+
+## Arduino library packaging
+
+The repository includes standard Arduino `library.properties` metadata and exports `<ESPressio_Persistence.hpp>` as its root public include. Arduino IDE / Arduino CLI can therefore discover the platform-neutral Persistence contract as a normal installed or local Arduino library. This is packaging metadata only; Persistence semantics and dependency topology are unchanged.
