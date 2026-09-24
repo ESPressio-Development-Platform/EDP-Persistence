@@ -6,7 +6,7 @@ EDP-Persistence requires official C++20. This is required by the EDP-System Comp
 
 ## Arduino development
 
-The repository includes standard Arduino `library.properties` metadata and exports `<ESPressio_Persistence.hpp>` as its root public include. Arduino IDE / Arduino CLI consumers should install or supply EDP-Persistence and EDP-System as libraries rather than injecting repository `src` directories manually.
+The repository includes standard Arduino `library.properties` metadata and a framework-neutral PlatformIO `library.json` manifest, both exporting the existing `<ESPressio_Persistence.hpp>` public surface. Arduino IDE / Arduino CLI consumers should install or supply EDP-Persistence and EDP-System as libraries rather than injecting repository `src` directories manually. PlatformIO consumers may use the same library under Arduino or pure ESP-IDF because the manifest declares `frameworks: "*"` and `platforms: "*"`.
 
 New Arduino-ESP32 consumers should prefer **PIOArduino** rather than the older PlatformIO Arduino platform packages because the EDP baseline requires a modern Arduino-ESP32/toolchain with C++20 support.
 
